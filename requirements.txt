@@ -1,0 +1,12 @@
+python-dotenv
+groq
+langchain
+langchain-community
+sqlalchemy
+langchain-groq
+streamlit
+sqlglot
+plotly
+tabulate
+black
+isort
