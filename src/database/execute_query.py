@@ -7,6 +7,8 @@ from database.database import engine
 
 logger = logging.getLogger(__name__)
 
+MAX_ROWS = 1000
+
 
 class QueryExecutionError(Exception):
     """Raised when SQL execution fails."""
@@ -24,7 +26,8 @@ class QueryExecutor:
             sql: Validated SQL query.
 
         Returns:
-            Pandas DataFrame containing the query result.
+            Pandas DataFrame containing the query result, capped at
+            MAX_ROWS rows.
 
         Raises:
             QueryExecutionError: If query execution fails.
@@ -34,6 +37,14 @@ class QueryExecutor:
             logger.info("Executing SQL:\n%s", sql)
 
             dataframe = pd.read_sql(sql, engine)
+
+            if len(dataframe) > MAX_ROWS:
+                logger.warning(
+                    "Query returned %d rows, truncating to %d.",
+                    len(dataframe),
+                    MAX_ROWS,
+                )
+                dataframe = dataframe.head(MAX_ROWS)
 
             logger.info(
                 "Query executed successfully. Rows returned: %d", len(dataframe)

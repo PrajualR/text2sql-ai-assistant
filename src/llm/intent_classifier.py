@@ -9,20 +9,20 @@ class IntentClassificationError(Exception):
 
 
 class IntentClassifier:
-    """Classifies whether a query is READ or WRITE."""
+    """Classifies a user message as READ, WRITE, or OFF_TOPIC."""
 
-    VALID_INTENTS = {"READ", "WRITE"}
+    VALID_INTENTS = {"READ", "WRITE", "OFF_TOPIC"}
 
     @classmethod
     def classify(cls, question: str) -> str:
         """
-        Classify a user's question.
+        Classify a user's message.
 
         Args:
-            question: Natural language query.
+            question: Natural language input.
 
         Returns:
-            READ or WRITE
+            READ, WRITE, or OFF_TOPIC
 
         Raises:
             IntentClassificationError
