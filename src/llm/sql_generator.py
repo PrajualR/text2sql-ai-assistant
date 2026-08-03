@@ -3,6 +3,7 @@ from langchain_core.output_parsers import StrOutputParser
 from database.inspector import DatabaseInspector
 from llm.client import llm
 from llm.prompts import SQL_GENERATION_PROMPT
+from services.conversation import ConversationContext
 
 
 class SQLGenerationError(Exception):
@@ -10,29 +11,19 @@ class SQLGenerationError(Exception):
 
 
 class SQLGenerator:
-    """Generates SQLite SELECT statements."""
 
     @classmethod
-    def generate(cls, question: str) -> str:
-        """
-        Generate SQL from a natural language question.
-
-        Args:
-            question: User's natural language question.
-
-        Returns:
-            Generated SQL query.
-
-        Raises:
-            SQLGenerationError
-        """
+    def generate(cls, question: str, history: ConversationContext | None = None) -> str:
 
         schema = DatabaseInspector.get_schema()
+        history_text = history.as_prompt_text() if history else "No prior conversation in this session."
 
         chain = SQL_GENERATION_PROMPT | llm | StrOutputParser()
 
         try:
-            sql = chain.invoke({"schema": schema, "question": question}).strip()
+            sql = chain.invoke(
+                {"schema": schema, "question": question, "history": history_text}
+            ).strip()
 
         except Exception as exc:
             raise SQLGenerationError(f"SQL generation failed: {exc}") from exc

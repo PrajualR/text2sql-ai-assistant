@@ -48,9 +48,6 @@ class SQLValidator:
 
         return safe_tree.sql(dialect="sqlite")
 
-    # ------------------------------------------------------------------
-    # Statement-count guard
-    # ------------------------------------------------------------------
 
     @staticmethod
     def _reject_multiple_statements(sql: str) -> None:

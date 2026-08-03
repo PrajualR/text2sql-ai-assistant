@@ -50,7 +50,7 @@ _DOMAIN_VOCABULARY = {
 _WORD_RE = re.compile(r"[a-zA-Z0-9]+")
 
 
-def is_plausibly_domain_related(question: str) -> bool:
+def is_plausibly_domain_related(question: str, history_text: str = "") -> bool:
     """
     Cheap, deterministic check for whether a question contains any
     vocabulary plausibly related to the ESG dataset.
@@ -66,7 +66,7 @@ def is_plausibly_domain_related(question: str) -> bool:
     borderline cases are left to the LLM intent classifier.
     """
 
-    tokens = {t.lower() for t in _WORD_RE.findall(question)}
+    tokens = {t.lower() for t in _WORD_RE.findall(f"{question} {history_text}")}
 
     if not tokens:
         return False

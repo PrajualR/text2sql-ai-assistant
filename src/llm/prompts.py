@@ -84,9 +84,23 @@ Database Schema:
 
 {schema}
 
-User Question:
+Conversation So Far (most recent turns of this session):
+
+{history}
+
+Current User Question:
 
 {question}
+
+Drill-down rule:
+
+If the current question is a refinement of the conversation above —
+e.g. it says "drill down", "break that down", "now by facility",
+"same but for X", "within that", "and 2024?" — reuse the filters and
+grouping from the most relevant prior SQL turn and narrow or extend
+them rather than starting from scratch. If the current question is
+self-contained and unrelated to the conversation, ignore the history
+and answer it independently.
 
 Rules:
 
@@ -103,24 +117,14 @@ Rules:
 11. If sorting is requested, use ORDER BY.
 12. CRITICAL: If the question does not clearly and specifically ask
     for facility, emissions, energy, water, waste, workforce,
-    training, or compliance data, you MUST return exactly:
+    training, or compliance data — and cannot be resolved as a
+    drill-down of the conversation above — you MUST return exactly:
 
     UNSUPPORTED_QUERY
-
-    Do NOT invent a fallback query. Do NOT default to selecting
-    arbitrary rows with LIMIT 1 when you are unsure what the user
-    wants. A generic, disconnected query is worse than admitting the
-    question is unsupported.
 
 Examples:
 
 Question: "hello"
-Answer: UNSUPPORTED_QUERY
-
-Question: "what is the probability of rain today"
-Answer: UNSUPPORTED_QUERY
-
-Question: "show moon emissions"
 Answer: UNSUPPORTED_QUERY
 
 Question: "show all facilities"
@@ -180,6 +184,10 @@ finding. For example, open with something like:
   pointing to a deliberately balanced footprint."
 - "Pune Automotive Plant 1's Scope 1 emissions of 517.7 sit well
   below its Scope 3 total, which is the figure worth watching."
+
+  If the result contains more than one numeric metric, address each
+metric in its own sentence and do not compare "lowest"/"highest"
+across two different metrics as if they were the same scale.
 
 Vary your opening sentence structure each time rather than
 following a template.

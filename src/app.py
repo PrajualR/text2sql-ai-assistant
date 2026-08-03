@@ -5,150 +5,101 @@ import streamlit as st
 from database.execute_query import QueryExecutionError
 from llm.intent_classifier import IntentClassificationError
 from llm.sql_generator import SQLGenerationError
+from services.conversation import ConversationContext
 from services.sql_service import SQLService, SQLServiceError
 from services.validation_service import SQLValidationError
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-)
-
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
 
+
 def handle_query_error(exc: Exception) -> str:
-
     if isinstance(exc, SQLServiceError):
-        # Currently raised for empty questions and WRITE-intent
-        # questions. The message from SQLService is already
-        # user-appropriate, so surface it directly.
-        logger.warning("Blocked request: %s", exc)
         return str(exc)
-
     if isinstance(exc, IntentClassificationError):
-        logger.error("Intent classification failed: %s", exc)
-        return (
-            "I couldn't determine how to handle that question. "
-            "Try rephrasing it as a direct question about the ESG data."
-        )
-
+        return "I couldn't determine how to handle that question. Try rephrasing it as a direct question about the ESG data."
     if isinstance(exc, SQLGenerationError):
-        logger.error("SQL generation failed: %s", exc)
-        return (
-            "I couldn't translate that question into a query against "
-            "the available data. Try rephrasing it, or ask about a "
-            "specific metric, facility, country, or year."
-        )
-
+        return "I couldn't translate that into a query. Try naming a specific metric, facility, country, or year."
     if isinstance(exc, SQLValidationError):
-        logger.error("SQL validation failed: %s", exc)
-        return (
-            "The generated query referenced data outside what's "
-            "available. Try rephrasing your question using terms "
-            "closer to the dataset (e.g. facility, country, industry, "
-            "fiscal year, emissions, energy, waste, workforce)."
-        )
-
+        return "That query referenced data outside what's available. Try terms closer to the dataset (facility, country, industry, fiscal year, emissions, energy, waste, workforce)."
     if isinstance(exc, QueryExecutionError):
-        logger.error("Query execution failed: %s", exc)
-        return (
-            "Something went wrong while running that query against the "
-            "database. Please try again, and let us know if it keeps "
-            "happening."
-        )
-
-    # Anything unexpected: log the full detail, show a generic message.
+        return "Something went wrong running that query. Please try again."
     logger.exception("Unexpected error while processing question.")
-    return (
-        "Something unexpected went wrong while processing your "
-        "question. Please try again."
-    )
-
-st.set_page_config(
-    page_title="ESG Analytics Assistant",
-    page_icon="📊",
-    layout="wide",
-)
-
-st.title("ESG Natural Language Analytics Assistant")
-
-st.caption(
-    "Ask ESG-related questions in plain English and receive insights, visualizations, and query results."
-)
+    return "Something unexpected went wrong. Please try again."
 
 
-if "result" not in st.session_state:
-    st.session_state.result = None
+st.set_page_config(page_title="ESG Analytics Assistant", page_icon="📊", layout="wide")
 
+if "messages" not in st.session_state:
+    st.session_state.messages = []          # chat transcript
+if "history" not in st.session_state:
+    st.session_state.history = ConversationContext()
 
-question = st.text_area(
-    "Ask your question",
-    placeholder="Example: Compare Scope 1 emissions by country",
-    height=120,
-)
+with st.sidebar:
+    st.header("📊 ESG Analytics Assistant")
+    st.caption("Ask in plain English. Follow-ups like *“now break that down by facility”* build on your last question.")
+    if st.button("🔄 New conversation", use_container_width=True):
+        st.session_state.messages = []
+        st.session_state.history.clear()
+        st.rerun()
 
+    st.divider()
+    st.caption("Try asking:")
+    examples = [
+        "Compare Scope 1 emissions by country",
+        "Top 5 facilities by water withdrawal",
+        "Trend of waste recycling over the last 3 years",
+        "Show women representation by country",
+    ]
+    for ex in examples:
+        if st.button(ex, use_container_width=True, key=f"ex_{ex}"):
+            st.session_state.pending_question = ex
 
-if st.button("Generate Insights", use_container_width=True):
+st.title("ESG Natural Language Analytics")
 
-    if not question.strip():
-        st.warning("Please enter a question.")
-        st.stop()
+# --- replay transcript ---
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+        result = msg.get("result")
+        if result:
+            if result.chart:
+                st.plotly_chart(result.chart, use_container_width=True)
+            if not result.dataframe.empty:
+                with st.expander("📋 Data & SQL", expanded=False):
+                    st.dataframe(result.dataframe, use_container_width=True, hide_index=True)
+                    st.code(result.sql, language="sql")
+                    csv = result.dataframe.to_csv(index=False).encode("utf-8")
+                    st.download_button(
+                        "⬇ Download CSV", data=csv, file_name="query_results.csv",
+                        mime="text/csv", key=f"dl_{id(result)}",
+                    )
 
-    with st.spinner("Analyzing ESG data..."):
+# --- input (chat box or a clicked example) ---
+question = st.chat_input("Ask about emissions, energy, water, waste, workforce, or compliance...")
+if "pending_question" in st.session_state:
+    question = st.session_state.pop("pending_question")
 
-        try:
+if question:
+    st.session_state.messages.append({"role": "user", "content": question})
+    with st.chat_message("user"):
+        st.markdown(question)
 
-            st.session_state.result = SQLService.process_question(question)
-
-        except Exception as e:
-
-            st.session_state.result = None
-            st.error(handle_query_error(e))
-
-
-if st.session_state.result is not None:
-
-    result = st.session_state.result
-
-    st.subheader("💡 AI Insight")
-
-    st.success(result.insight)
-
-    if result.chart:
-
-        st.subheader("📈 Visualization")
-
-        st.plotly_chart(
-            result.chart,
-            use_container_width=True,
-        )
-
-    st.subheader("📋 Query Results")
-
-    if result.dataframe.empty:
-
-        st.info("No records found.")
-
-    else:
-
-        st.dataframe(
-            result.dataframe,
-            use_container_width=True,
-            hide_index=True,
-        )
-
-        csv = result.dataframe.to_csv(index=False).encode("utf-8")
-
-        st.download_button(
-            "⬇ Download CSV",
-            data=csv,
-            file_name="query_results.csv",
-            mime="text/csv",
-            use_container_width=True,
-        )
-
-    with st.expander("Generated SQL"):
-
-        st.code(
-            result.sql,
-            language="sql",
-        )
+    with st.chat_message("assistant"):
+        with st.spinner("Analyzing..."):
+            try:
+                result = SQLService.process_question(question, st.session_state.history)
+                st.markdown(result.insight)
+                if result.chart:
+                    st.plotly_chart(result.chart, use_container_width=True)
+                if not result.dataframe.empty:
+                    with st.expander("📋 Data & SQL", expanded=False):
+                        st.dataframe(result.dataframe, use_container_width=True, hide_index=True)
+                        st.code(result.sql, language="sql")
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": result.insight, "result": result}
+                )
+            except Exception as e:
+                error_text = handle_query_error(e)
+                st.error(error_text)
+                st.session_state.messages.append({"role": "assistant", "content": error_text, "result": None})
