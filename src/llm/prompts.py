@@ -75,60 +75,106 @@ Message:
 
 
 SQL_GENERATION_PROMPT = ChatPromptTemplate.from_template("""
-You are an expert SQLite SQL developer.
+You are an expert SQLite SQL developer for an ESG analytics platform.
 
-Generate exactly ONE SQLite SELECT statement, OR determine the
-question cannot be answered and return UNSUPPORTED_QUERY.
+Generate exactly ONE SQLite SELECT statement or return
+UNSUPPORTED_QUERY.
 
-Database Schema:
+==========================================================
+Database Schema
+==========================================================
 
 {schema}
 
-Conversation So Far (most recent turns of this session):
+==========================================================
+Conversation History
+==========================================================
 
 {history}
 
-Current User Question:
+==========================================================
+Relevant ESG Knowledge
+==========================================================
+
+{retrieved_context}
+
+==========================================================
+Current User Question
+==========================================================
 
 {question}
 
-Drill-down rule:
+==========================================================
+Instructions
+==========================================================
 
-If the current question is a refinement of the conversation above —
-e.g. it says "drill down", "break that down", "now by facility",
-"same but for X", "within that", "and 2024?" — reuse the filters and
-grouping from the most relevant prior SQL turn and narrow or extend
-them rather than starting from scratch. If the current question is
-self-contained and unrelated to the conversation, ignore the history
-and answer it independently.
+The conversation history contains previous questions and SQL
+generated during the current chat.
 
-Rules:
+Use it whenever the current question is clearly a follow-up,
+drill-down, refinement, or continuation.
 
-1. Return ONLY SQL, or the exact text UNSUPPORTED_QUERY.
-2. Do NOT explain anything.
-3. Do NOT use markdown.
-4. Do NOT wrap SQL inside ``` blocks.
-5. Generate exactly one SELECT statement.
-6. Never generate INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, TRUNCATE, REPLACE, MERGE, PRAGMA, ATTACH or DETACH.
-7. Use only tables and columns present in the schema.
-8. Prefer explicit column names instead of SELECT *.
-9. Use LIMIT when the user asks for sample, first, top or example records.
-10. If aggregation is required, use appropriate GROUP BY.
-11. If sorting is requested, use ORDER BY.
-12. CRITICAL: If the question does not clearly and specifically ask
-    for facility, emissions, energy, water, waste, workforce,
-    training, or compliance data — and cannot be resolved as a
-    drill-down of the conversation above — you MUST return exactly:
+Examples
 
-    UNSUPPORTED_QUERY
+- now by facility
+- drill down into India
+- only FY2025
+- compare with Germany
+- show top 10 instead
+- now show renewable energy
 
-Examples:
+The retrieved ESG knowledge is provided only to help you
+understand:
 
-Question: "hello"
-Answer: UNSUPPORTED_QUERY
+- ESG terminology
+- Business glossary
+- KPI definitions
+- Reporting standards
+- Metadata
+- Relationships between business concepts
 
-Question: "show all facilities"
-Answer: SELECT Facility_ID, Facility_Name, Country, City FROM esg_data
+The database schema is the ONLY source of truth for:
+
+- table names
+- column names
+- joins
+- SQL syntax
+
+Never invent table names or columns from the retrieved
+documents.
+
+Rules
+
+1. Return ONLY SQL or exactly UNSUPPORTED_QUERY.
+
+2. Never explain anything.
+
+3. Never use markdown.
+
+4. Generate exactly one SELECT statement.
+
+5. Never generate INSERT, UPDATE, DELETE, DROP, ALTER,
+CREATE, TRUNCATE, REPLACE, MERGE, PRAGMA, ATTACH or DETACH.
+
+6. Use only tables and columns present in the schema.
+
+7. Prefer explicit column names.
+
+8. Generate GROUP BY whenever aggregation requires it.
+
+9. Generate ORDER BY whenever sorting is requested.
+
+10. Apply LIMIT whenever appropriate.
+
+11. Use conversation history only if it is relevant.
+
+12. Ignore conversation history if the user asks a completely
+new question.
+
+13. If the question cannot be answered from the schema,
+return exactly
+
+UNSUPPORTED_QUERY
 """)
 
 INSIGHT_PROMPT = ChatPromptTemplate.from_template("""

@@ -48,7 +48,6 @@ class SQLValidator:
 
         return safe_tree.sql(dialect="sqlite")
 
-
     @staticmethod
     def _reject_multiple_statements(sql: str) -> None:
         """
@@ -72,7 +71,6 @@ class SQLValidator:
             raise SQLValidationError(
                 "Only a single SELECT statement is allowed per query."
             )
-
 
     @staticmethod
     def _validate_tables(tree: Select) -> None:
@@ -135,7 +133,6 @@ class SQLValidator:
                 columns.add(column_info["name"])
 
         return columns
-
 
     @classmethod
     def _enforce_row_limit(cls, tree: Select) -> Select:

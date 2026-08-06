@@ -19,7 +19,6 @@ class InsightGenerator:
         if dataframe.empty:
             return "No records were returned for the requested query."
 
-
         summary = ResultSummarizer.build(
             dataframe=dataframe,
             sql=sql,

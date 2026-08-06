@@ -5,6 +5,10 @@ langchain-community
 sqlalchemy
 langchain-groq
 streamlit
+chromadb
+sentence-transformers
+pymupdf
+langchain-text-splitters
 sqlglot
 plotly
 tabulate

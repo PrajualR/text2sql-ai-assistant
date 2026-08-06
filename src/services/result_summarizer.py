@@ -24,21 +24,15 @@ class ResultSummarizer:
 
         sections.append("")
 
-        sections.extend(
-            cls._summarize_columns(dataframe)
-        )
+        sections.extend(cls._summarize_columns(dataframe))
 
         sections.append("")
 
-        sections.extend(
-            cls._summarize_metrics(dataframe)
-        )
+        sections.extend(cls._summarize_metrics(dataframe))
 
         sections.append("")
 
-        sections.extend(
-            cls._sample_rows(dataframe)
-        )
+        sections.extend(cls._sample_rows(dataframe))
 
         sections.append("")
 
@@ -55,33 +49,21 @@ class ResultSummarizer:
 
         numeric = df.select_dtypes(include="number").columns.tolist()
 
-        categorical = [
-            c
-            for c in df.columns
-            if c not in numeric
-        ]
+        categorical = [c for c in df.columns if c not in numeric]
 
         lines = []
 
         if categorical:
 
-            lines.append(
-                "Dimensions:"
-            )
+            lines.append("Dimensions:")
 
-            lines.append(
-                ", ".join(categorical)
-            )
+            lines.append(", ".join(categorical))
 
         if numeric:
 
-            lines.append(
-                "Metrics:"
-            )
+            lines.append("Metrics:")
 
-            lines.append(
-                ", ".join(numeric)
-            )
+            lines.append(", ".join(numeric))
 
         return lines
 
@@ -103,17 +85,11 @@ class ResultSummarizer:
 
             lines.append(f"Metric: {column}")
 
-            lines.append(
-                f"Average: {series.mean():,.2f}"
-            )
+            lines.append(f"Average: {series.mean():,.2f}")
 
-            lines.append(
-                f"Minimum: {series.min():,.2f}"
-            )
+            lines.append(f"Minimum: {series.min():,.2f}")
 
-            lines.append(
-                f"Maximum: {series.max():,.2f}"
-            )
+            lines.append(f"Maximum: {series.max():,.2f}")
 
             if len(df.columns) >= 2:
 
@@ -121,13 +97,9 @@ class ResultSummarizer:
 
                 try:
 
-                    highest_row = df.loc[
-                        series.idxmax()
-                    ]
+                    highest_row = df.loc[series.idxmax()]
 
-                    lowest_row = df.loc[
-                        series.idxmin()
-                    ]
+                    lowest_row = df.loc[series.idxmin()]
 
                     lines.append(
                         f"Highest: {highest_row[dimension]} ({series.max():,.2f})"
@@ -153,8 +125,6 @@ class ResultSummarizer:
 
         lines.append("Sample Data")
 
-        lines.append(
-            df.head(10).to_markdown(index=False)
-        )
+        lines.append(df.head(10).to_markdown(index=False))
 
         return lines

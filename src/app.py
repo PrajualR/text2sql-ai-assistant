@@ -9,7 +9,9 @@ from services.conversation import ConversationContext
 from services.sql_service import SQLService, SQLServiceError
 from services.validation_service import SQLValidationError
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -31,13 +33,15 @@ def handle_query_error(exc: Exception) -> str:
 st.set_page_config(page_title="ESG Analytics Assistant", page_icon="📊", layout="wide")
 
 if "messages" not in st.session_state:
-    st.session_state.messages = []          # chat transcript
+    st.session_state.messages = []  # chat transcript
 if "history" not in st.session_state:
     st.session_state.history = ConversationContext()
 
 with st.sidebar:
     st.header("📊 ESG Analytics Assistant")
-    st.caption("Ask in plain English. Follow-ups like *“now break that down by facility”* build on your last question.")
+    st.caption(
+        "Ask in plain English. Follow-ups like *“now break that down by facility”* build on your last question."
+    )
     if st.button("🔄 New conversation", use_container_width=True):
         st.session_state.messages = []
         st.session_state.history.clear()
@@ -67,16 +71,23 @@ for msg in st.session_state.messages:
                 st.plotly_chart(result.chart, use_container_width=True)
             if not result.dataframe.empty:
                 with st.expander("📋 Data & SQL", expanded=False):
-                    st.dataframe(result.dataframe, use_container_width=True, hide_index=True)
+                    st.dataframe(
+                        result.dataframe, use_container_width=True, hide_index=True
+                    )
                     st.code(result.sql, language="sql")
                     csv = result.dataframe.to_csv(index=False).encode("utf-8")
                     st.download_button(
-                        "⬇ Download CSV", data=csv, file_name="query_results.csv",
-                        mime="text/csv", key=f"dl_{id(result)}",
+                        "⬇ Download CSV",
+                        data=csv,
+                        file_name="query_results.csv",
+                        mime="text/csv",
+                        key=f"dl_{id(result)}",
                     )
 
 # --- input (chat box or a clicked example) ---
-question = st.chat_input("Ask about emissions, energy, water, waste, workforce, or compliance...")
+question = st.chat_input(
+    "Ask about emissions, energy, water, waste, workforce, or compliance..."
+)
 if "pending_question" in st.session_state:
     question = st.session_state.pop("pending_question")
 
@@ -94,7 +105,9 @@ if question:
                     st.plotly_chart(result.chart, use_container_width=True)
                 if not result.dataframe.empty:
                     with st.expander("📋 Data & SQL", expanded=False):
-                        st.dataframe(result.dataframe, use_container_width=True, hide_index=True)
+                        st.dataframe(
+                            result.dataframe, use_container_width=True, hide_index=True
+                        )
                         st.code(result.sql, language="sql")
                 st.session_state.messages.append(
                     {"role": "assistant", "content": result.insight, "result": result}
@@ -102,4 +115,6 @@ if question:
             except Exception as e:
                 error_text = handle_query_error(e)
                 st.error(error_text)
-                st.session_state.messages.append({"role": "assistant", "content": error_text, "result": None})
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": error_text, "result": None}
+                )

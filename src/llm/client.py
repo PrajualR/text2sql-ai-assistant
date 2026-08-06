@@ -1,32 +1,26 @@
-import os
-
-from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
-load_dotenv()
+from config import Settings
 
 
 class LLMClient:
-    """Factory for creating the Groq LLM."""
+    """
+    Factory for creating the application's LLM.
+    """
 
     @staticmethod
     def get_llm() -> ChatGroq:
-        """
-        Returns a configured ChatGroq instance.
-        """
 
-        api_key = os.getenv("GROQ_API_KEY")
-
-        if not api_key:
+        if not Settings.GROQ_API_KEY:
             raise ValueError("GROQ_API_KEY not found. Please check your .env file.")
 
         return ChatGroq(
-            api_key=api_key,
-            model="llama-3.3-70b-versatile",
-            temperature=0,
-            max_tokens=1024,
-            timeout=60,
-            max_retries=2,
+            api_key=Settings.GROQ_API_KEY,
+            model=Settings.LLM_MODEL,
+            temperature=Settings.LLM_TEMPERATURE,
+            max_tokens=Settings.LLM_MAX_TOKENS,
+            timeout=Settings.LLM_TIMEOUT,
+            max_retries=Settings.LLM_MAX_RETRIES,
         )
 
 

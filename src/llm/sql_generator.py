@@ -13,25 +13,44 @@ class SQLGenerationError(Exception):
 class SQLGenerator:
 
     @classmethod
-    def generate(cls, question: str, history: ConversationContext | None = None) -> str:
+    def generate(
+        cls,
+        question: str,
+        retrieved_context: str,
+        history: ConversationContext | None = None,
+    ) -> str:
 
         schema = DatabaseInspector.get_schema()
-        history_text = history.as_prompt_text() if history else "No prior conversation in this session."
+
+        history_text = (
+            history.as_prompt_text()
+            if history
+            else "No prior conversation in this session."
+        )
 
         chain = SQL_GENERATION_PROMPT | llm | StrOutputParser()
 
         try:
+
             sql = chain.invoke(
-                {"schema": schema, "question": question, "history": history_text}
+                {
+                    "schema": schema,
+                    "history": history_text,
+                    "retrieved_context": retrieved_context,
+                    "question": question,
+                }
             ).strip()
 
         except Exception as exc:
+
             raise SQLGenerationError(f"SQL generation failed: {exc}") from exc
 
         if not sql:
+
             raise SQLGenerationError("LLM returned an empty SQL query.")
 
         if sql.upper() == "UNSUPPORTED_QUERY":
+
             raise SQLGenerationError(
                 "The requested information is not available in the current database schema."
             )

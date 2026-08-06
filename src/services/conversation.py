@@ -18,7 +18,7 @@ class ConversationContext:
     def add(self, question: str, sql: str) -> None:
         self.turns.append(ConversationTurn(question=question, sql=sql))
         if len(self.turns) > self.max_turns:
-            self.turns = self.turns[-self.max_turns:]
+            self.turns = self.turns[-self.max_turns :]
 
     def as_prompt_text(self) -> str:
         if not self.turns:
