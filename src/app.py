@@ -23,7 +23,7 @@ def handle_query_error(exc: Exception) -> str:
     if isinstance(exc, SQLGenerationError):
         return "I couldn't translate that into a query. Try naming a specific metric, facility, country, or year."
     if isinstance(exc, SQLValidationError):
-        return "That query referenced data outside what's available. Try terms closer to the dataset (facility, country, industry, fiscal year, emissions, energy, waste, workforce)."
+        return "That query referenced data outside what's available. "
     if isinstance(exc, QueryExecutionError):
         return "Something went wrong running that query. Please try again."
     logger.exception("Unexpected error while processing question.")
@@ -40,7 +40,7 @@ if "history" not in st.session_state:
 with st.sidebar:
     st.header("📊 ESG Analytics Assistant")
     st.caption(
-        "Ask in plain English. Follow-ups like *“now break that down by facility”* build on your last question."
+        "This space provides analytics on ESG manufacturing data — things like emissions, energy, water, waste, workforce, and compliance metrics across facilities."
     )
     if st.button("🔄 New conversation", use_container_width=True):
         st.session_state.messages = []
@@ -70,7 +70,7 @@ for msg in st.session_state.messages:
             if result.chart:
                 st.plotly_chart(result.chart, use_container_width=True)
             if not result.dataframe.empty:
-                with st.expander("📋 Data & SQL", expanded=False):
+                with st.expander("Data & SQL", expanded=False):
                     st.dataframe(
                         result.dataframe, use_container_width=True, hide_index=True
                     )
@@ -86,7 +86,7 @@ for msg in st.session_state.messages:
 
 # --- input (chat box or a clicked example) ---
 question = st.chat_input(
-    "Ask about emissions, energy, water, waste, workforce, or compliance..."
+    "Ask your question..."
 )
 if "pending_question" in st.session_state:
     question = st.session_state.pop("pending_question")
@@ -104,7 +104,7 @@ if question:
                 if result.chart:
                     st.plotly_chart(result.chart, use_container_width=True)
                 if not result.dataframe.empty:
-                    with st.expander("📋 Data & SQL", expanded=False):
+                    with st.expander("Data & SQL", expanded=False):
                         st.dataframe(
                             result.dataframe, use_container_width=True, hide_index=True
                         )

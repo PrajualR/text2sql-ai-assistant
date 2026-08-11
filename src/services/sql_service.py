@@ -8,11 +8,11 @@ from llm.insight_generator import InsightGenerator
 from llm.intent_classifier import IntentClassifier
 from llm.sql_generator import SQLGenerator
 from rag.retriever import Retriever
-from services.conversation import ConversationContext
 from services.topic_filter import is_plausibly_domain_related
 from services.validation_service import SQLValidator
 from services.visualization_service import VisualizationService
-
+from services.conversation import ConversationContext
+retriever = Retriever()
 
 class SQLServiceError(Exception):
     """Raised when the SQL service fails."""
@@ -56,16 +56,21 @@ class SQLService:
         intent = IntentClassifier.classify(question)
 
         if intent == "WRITE":
-            raise SQLServiceError(...)  # unchanged
+            raise SQLServiceError(
+                "This assistant only supports read-only ESG analytics queries."
+            )
 
         if intent == "OFF_TOPIC" and not history:
             raise SQLServiceError(OFF_TOPIC_MESSAGE)
 
-        retriever = Retriever()
 
-        retrieved_chunks = retriever.retrieve(question)
+        retrieved_chunks = retriever.retrieve(
+            question
+        )
 
-        retrieved_context = retriever.build_context(retrieved_chunks)
+        retrieved_context = retriever.build_context(
+            retrieved_chunks
+        )
 
         generated_sql = SQLGenerator.generate(
             question=question,
@@ -84,9 +89,6 @@ class SQLService:
             history.add(question, safe_sql)
 
         return QueryResult(
-            question=question,
-            sql=safe_sql,
-            dataframe=dataframe,
-            insight=insight,
-            chart=chart.figure,
+            question=question, sql=safe_sql, dataframe=dataframe,
+            insight=insight, chart=chart.figure,
         )
