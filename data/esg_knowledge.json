@@ -1,0 +1,366 @@
+{
+  "dataset": {
+    "table": "esg_data",
+    "description": "Primary ESG manufacturing analytics dataset.",
+    "read_only": true
+  },
+
+  "dimensions": {
+    "facility_id": {
+      "column": "Facility_ID",
+      "aliases": [
+        "facility",
+        "facilities",
+        "facility id",
+        "site",
+        "sites",
+        "plant",
+        "plants"
+      ],
+      "type": "facility"
+    },
+
+    "facility_name": {
+      "column": "Facility_Name",
+      "aliases": [
+        "facility name",
+        "site name",
+        "plant name"
+      ],
+      "type": "facility_name"
+    },
+
+    "country": {
+      "column": "Country",
+      "aliases": [
+        "country",
+        "nation"
+      ],
+      "type": "geography"
+    },
+
+    "city": {
+      "column": "City",
+      "aliases": [
+        "city"
+      ],
+      "type": "geography"
+    },
+
+    "industry": {
+      "column": "Industry",
+      "aliases": [
+        "industry",
+        "sector"
+      ],
+      "type": "business"
+    },
+
+    "fiscal_year": {
+      "column": "Fiscal_Year",
+      "aliases": [
+        "year",
+        "fiscal year",
+        "fiscal",
+        "fy"
+      ],
+      "type": "time"
+    }
+  },
+
+  "kpis": {
+    "scope_1_emissions": {
+      "name": "Scope 1 Emissions",
+      "column": "Scope1_Emissions",
+      "aggregation": "SUM",
+      "unit": "tons",
+      "aliases": [
+        "carbon footprint",
+        "carbon emissions"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "scope_2_emissions": {
+      "name": "Scope 2 Emissions",
+      "column": "Scope2_Emissions",
+      "aggregation": "SUM",
+      "unit": "tons",
+      "aliases": [
+        "scope 2",
+        "scope 2 emissions",
+        "scope2",
+        "indirect emissions from purchased electricity"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "scope_3_emissions": {
+      "name": "Scope 3 Emissions",
+      "column": "Scope3_Emissions",
+      "aggregation": "SUM",
+      "unit": "tons",
+      "aliases": [
+        "scope 3",
+        "scope 3 emissions",
+        "scope3",
+        "value chain emissions"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "total_energy": {
+      "name": "Total Energy",
+      "column": "Total_Energy_MWh",
+      "aggregation": "SUM",
+      "unit": "MWh",
+      "aliases": [
+        "energy",
+        "energy consumption",
+        "total energy",
+        "energy usage"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "renewable_energy_percentage": {
+      "name": "Renewable Energy Percentage",
+      "column": "Renewable_Energy_Percentage",
+      "aggregation": "AVG",
+      "unit": "percentage",
+      "aliases": [
+        "renewable energy",
+        "renewable energy percentage",
+        "renewable energy %",
+        "green energy",
+        "renewable adoption"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "water_withdrawal": {
+      "name": "Water Withdrawal",
+      "column": "Water_Withdrawal_m3",
+      "aggregation": "SUM",
+      "unit": "m3",
+      "aliases": [
+        "water withdrawal",
+        "water withdrawn",
+        "water usage",
+        "water use",
+        "water consumption"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "water_recycled_percentage": {
+      "name": "Water Recycled Percentage",
+      "column": "Water_Recycled_Percentage",
+      "aggregation": "AVG",
+      "unit": "percentage",
+      "aliases": [
+        "water recycled",
+        "water recycled percentage",
+        "water recycling",
+        "water recycled %"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "waste_generated": {
+      "name": "Waste Generated",
+      "column": "Waste_Generated_Tons",
+      "aggregation": "SUM",
+      "unit": "tons",
+      "aliases": [
+        "waste generated",
+        "waste",
+        "waste production",
+        "waste output"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "waste_recycled_percentage": {
+      "name": "Waste Recycled Percentage",
+      "column": "Waste_Recycled_Percentage",
+      "aggregation": "AVG",
+      "unit": "percentage",
+      "aliases": [
+        "waste recycled",
+        "waste recycling",
+        "waste recycled percentage",
+        "waste recycled %"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "employee_count": {
+      "name": "Employee Count",
+      "column": "Employee_Count",
+      "aggregation": "SUM",
+      "unit": "employees",
+      "aliases": [
+        "employee count",
+        "employees",
+        "headcount",
+        "workforce"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "female_workforce_percentage": {
+      "name": "Female Workforce Percentage",
+      "column": "Female_Workforce_Percentage",
+      "aggregation": "AVG",
+      "unit": "percentage",
+      "aliases": [
+        "female workforce",
+        "female workforce percentage",
+        "women representation",
+        "gender diversity",
+        "women percentage"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "employee_turnover_percentage": {
+      "name": "Employee Turnover Percentage",
+      "column": "Employee_Turnover_Percentage",
+      "aggregation": "AVG",
+      "unit": "percentage",
+      "aliases": [
+        "employee turnover",
+        "turnover",
+        "employee attrition",
+        "attrition",
+        "attrition rate",
+        "employee turnover percentage"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "training_hours": {
+      "name": "Training Hours",
+      "column": "Training_Hours",
+      "aggregation": "AVG",
+      "unit": "hours",
+      "aliases": [
+        "training hours",
+        "employee training",
+        "training"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    },
+
+    "compliance_violations": {
+      "name": "Compliance Violations",
+      "column": "Compliance_Violations",
+      "aggregation": "SUM",
+      "unit": "violations",
+      "aliases": [
+        "compliance violations",
+        "violations",
+        "compliance incidents"
+      ],
+      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+    }
+  },
+
+  "default_groupable_by": [
+    "country",
+    "city",
+    "industry",
+    "facility_id",
+    "facility_name",
+    "fiscal_year"
+  ],
+
+  "relationship_overrides": [],
+
+  "business_synonyms": {
+    "carbon_footprint": {
+      "aliases": [
+        "carbon footprint",
+        "carbon emissions"
+      ],
+      "maps_to": [
+        "scope_1_emissions",
+        "scope_2_emissions",
+        "scope_3_emissions"
+      ]
+    },
+
+    "green_energy": {
+      "aliases": [
+        "renewable energy",
+        "renewable energy percentage",
+        "green energy"
+      ],
+      "maps_to": [
+        "renewable_energy_percentage"
+      ]
+    },
+
+    "women_representation": {
+      "aliases": [
+        "female workforce",
+        "female workforce percentage",
+        "women representation",
+        "gender diversity"
+      ],
+      "maps_to": [
+        "female_workforce_percentage"
+      ]
+    },
+
+    "workforce": {
+      "aliases": [
+        "employee count",
+        "headcount",
+        "workforce"
+      ],
+      "maps_to": [
+        "employee_count"
+      ]
+    }
+  },
+
+  "drill_down_hierarchy": [
+    "Global",
+    "Country",
+    "City",
+    "Industry",
+    "Facility"
+  ],
+
+  "query_rules": {
+    "ranking": {
+      "top": "ORDER BY metric DESC",
+      "highest": "ORDER BY metric DESC",
+      "bottom": "ORDER BY metric ASC",
+      "lowest": "ORDER BY metric ASC",
+      "requires_limit": true
+    },
+
+    "trend": {
+      "group_by": "Fiscal_Year",
+      "order_by": "Fiscal_Year ASC"
+    },
+
+    "comparison": {
+      "group_by_requested_dimension": true
+    },
+
+    "read_only": true
+  },
+
+  "visualization_rules": {
+    "trend": "Line Chart",
+    "comparison": "Bar Chart",
+    "ranking": "Horizontal Bar Chart",
+    "distribution": "Pie Chart",
+    "single_kpi": "Metric Card",
+    "correlation": "Scatter Plot"
+  }
+}
