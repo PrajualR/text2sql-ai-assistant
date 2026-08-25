@@ -115,24 +115,14 @@ class GraphRetriever:
             dimensions,
         )
 
-        columns = [
-            kpi["column"]
-            for kpi in kpis
-        ]
+        columns = [kpi["column"] for kpi in kpis]
 
-        columns.extend(
-            dimension["column"]
-            for dimension in dimensions
-        )
+        columns.extend(dimension["column"] for dimension in dimensions)
 
         return GroundingResult(
             context=context,
-            matched_terms=list(
-                dict.fromkeys(matched_terms)
-            ),
-            columns=list(
-                dict.fromkeys(columns)
-            ),
+            matched_terms=list(dict.fromkeys(matched_terms)),
+            columns=list(dict.fromkeys(columns)),
         )
 
     @staticmethod
@@ -157,11 +147,7 @@ class GraphRetriever:
         terms: list[str],
     ) -> str | None:
 
-        normalized_terms = [
-            GraphRetriever._normalize(term)
-            for term in terms
-            if term
-        ]
+        normalized_terms = [GraphRetriever._normalize(term) for term in terms if term]
 
         # Exact phrase matching only.
         for term in sorted(
@@ -215,16 +201,12 @@ class GraphRetriever:
                 )
 
         if dimensions:
-            sections.append(
-                "\nRelevant dimensions:"
-            )
+            sections.append("\nRelevant dimensions:")
 
             for dimension in dimensions:
 
                 sections.append(
-                    "- "
-                    f"{dimension['key']} "
-                    f"(column: {dimension['column']})"
+                    "- " f"{dimension['key']} " f"(column: {dimension['column']})"
                 )
 
         return "\n".join(sections)

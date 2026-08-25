@@ -2,19 +2,12 @@ from pathlib import Path
 
 from grounding.graph_retriever import GraphRetriever
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
-KNOWLEDGE_PATH = (
-    PROJECT_ROOT
-    / "data"
-    / "esg_knowledge.json"
-)
+KNOWLEDGE_PATH = PROJECT_ROOT / "data" / "esg_knowledge.json"
 
 
-retriever = GraphRetriever(
-    KNOWLEDGE_PATH
-)
+retriever = GraphRetriever(KNOWLEDGE_PATH)
 
 
 QUESTIONS = [
@@ -36,9 +29,7 @@ print("=" * 80)
 
 for question in QUESTIONS:
 
-    result = retriever.retrieve(
-        question
-    )
+    result = retriever.retrieve(question)
 
     print("\nQuestion:")
     print(question)
