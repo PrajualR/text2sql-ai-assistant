@@ -70,16 +70,18 @@
 
   "kpis": {
     "scope_1_emissions": {
-      "name": "Scope 1 Emissions",
-      "column": "Scope1_Emissions",
-      "aggregation": "SUM",
-      "unit": "tons",
-      "aliases": [
-        "carbon footprint",
-        "carbon emissions"
-      ],
-      "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
-    },
+    "name": "Scope 1 Emissions",
+    "column": "Scope1_Emissions",
+    "aggregation": "SUM",
+    "unit": "tons",
+    "aliases": [
+      "scope 1",
+      "scope 1 emissions",
+      "scope1",
+      "direct emissions"
+    ],
+    "context_template": "{name} (column: {column}, aggregate with {aggregation}, unit: {unit})"
+  },
 
     "scope_2_emissions": {
       "name": "Scope 2 Emissions",
