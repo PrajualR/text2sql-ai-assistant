@@ -6,28 +6,27 @@
   },
 
   "dimensions": {
-    "facility_id": {
-      "column": "Facility_ID",
-      "aliases": [
-        "facility",
-        "facilities",
-        "facility id",
-        "site",
-        "sites",
-        "plant",
-        "plants"
-      ],
-      "type": "facility"
-    },
-
     "facility_name": {
       "column": "Facility_Name",
       "aliases": [
-        "facility name",
-        "site name",
-        "plant name"
+          "facility",
+          "facilities",
+          "facility name",
+          "site",
+          "sites",
+          "plant",
+          "plants"
       ],
-      "type": "facility_name"
+      "type": "facility"
+  },
+
+    "facility_id": {
+        "column": "Facility_ID",
+        "aliases": [
+            "facility id",
+            "facility identifier"
+        ],
+        "type": "facility_identifier"
     },
 
     "country": {
@@ -270,14 +269,13 @@
   },
 
   "default_groupable_by": [
-    "country",
-    "city",
-    "industry",
-    "facility_id",
-    "facility_name",
-    "fiscal_year"
+      "country",
+      "city",
+      "industry",
+      "facility_name",
+      "fiscal_year"
   ],
-
+  
   "relationship_overrides": [],
 
   "business_synonyms": {

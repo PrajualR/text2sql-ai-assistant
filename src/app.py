@@ -85,9 +85,7 @@ for msg in st.session_state.messages:
                     )
 
 # --- input (chat box or a clicked example) ---
-question = st.chat_input(
-    "Ask your question..."
-)
+question = st.chat_input("Ask your question...")
 if "pending_question" in st.session_state:
     question = st.session_state.pop("pending_question")
 
