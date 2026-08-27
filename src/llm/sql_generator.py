@@ -1,6 +1,7 @@
 from langchain_core.output_parsers import StrOutputParser
 
 from database.inspector import DatabaseInspector
+from exceptions import UnsupportedQuestionError
 from llm.client import llm
 from llm.prompts import SQL_GENERATION_PROMPT
 from services.conversation import ConversationContext
@@ -51,8 +52,10 @@ class SQLGenerator:
 
         if sql.upper() == "UNSUPPORTED_QUERY":
 
-            raise SQLGenerationError(
-                "The requested information is not available in the current database schema."
+            raise UnsupportedQuestionError(
+                "I can help you analyze the ESG data. Try asking about "
+                "emissions, energy, water, waste, workforce, facilities, "
+                "countries, or years."
             )
 
         return sql
